@@ -1,4 +1,4 @@
-module github.com/nickbullock/pomodoro/api
+module github.com/nickbullock/pomodoro-api
 
 go 1.13
 
