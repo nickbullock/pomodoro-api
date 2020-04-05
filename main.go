@@ -26,7 +26,7 @@ func init() {
 
 	flag.Parse()
 
-	if envMode == "prod" {
+	if envMode == "PROD" {
 		envFile = ".env-prod"
 	}
 
@@ -37,12 +37,19 @@ func init() {
 		panic("failed to load env")
 	}
 
-	fmt.Println("db:", os.Getenv("DB_NAME"))
+	pass := os.Getenv("DB_PASS")
 
-	dbOptions := []interface{}{os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_NAME"), "sslmode=disable"}
-	dbURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s %s", dbOptions...)
+	fmt.Println("db:", os.Getenv("DB_NAME"), pass)
 
-	fmt.Println("db url:", dbURL, dbOptions)
+	dbURLemplate := "host=%s port=%s user=%s dbname=%s sslmode=disable"
+	dbOptions := []interface{}{os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_NAME")}
+	if pass != "" {
+		dbURLemplate += " password=%s"
+		dbOptions = append(dbOptions, pass)
+	}
+	dbURL := fmt.Sprintf(dbURLemplate, dbOptions...)
+
+	fmt.Println("db url:", dbURL)
 
 	db, err = gorm.Open("postgres", dbURL)
 	if err != nil {
