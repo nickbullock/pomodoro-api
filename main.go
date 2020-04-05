@@ -21,16 +21,16 @@ func init() {
 	//open a db connection
 	var err error
 
-	var envMode = flag.String("mode", "dev", "a string")
+	var envMode = os.Getenv("MODE")
 	var envFile string = ".env"
 
 	flag.Parse()
 
-	if *envMode == "prod" {
+	if envMode == "prod" {
 		envFile = ".env-prod"
 	}
 
-	fmt.Println("mode:", *envMode, envFile)
+	fmt.Println("mode:", envMode, envFile)
 
 	err = godotenv.Load(envFile)
 	if err != nil {
@@ -54,7 +54,7 @@ func init() {
 }
 
 func main() {
-
+	var port = os.Getenv("PORT")
 	router := gin.Default()
 	router.Use(cors.Default())
 
@@ -67,7 +67,7 @@ func main() {
 		v1.DELETE("/:id", deleteTodo)
 	}
 
-	router.Run()
+	router.Run(":" + port)
 	// router.RunTLS(":8080", "server.crt", "server.key")
 
 }
